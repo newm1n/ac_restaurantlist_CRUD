@@ -39,6 +39,15 @@ app.get("/", (req, res) => {
     .catch((err) => console.log(err));
 });
 
+// view specific
+app.get("/restaurants/:restaurantId", (req, res) => {
+  const { restaurantId } = req.params;
+  Restaurant.findById(restaurantId)
+    .lean()
+    .then((restaurantData) => res.render("show", { restaurantData }))
+    .catch((err) => console.log(err));
+});
+
 // create page
 app.get("/restaurants/new", (req, res) => {
   res.render("new");
