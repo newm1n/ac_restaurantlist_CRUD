@@ -1,6 +1,7 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
 const mongoose = require("mongoose");
+const Restaurant = require("./models/Restaurant");
 
 // 加入這段 code, 僅在非正式環境時, 使用 dotenv
 if (process.env.NODE_ENV !== "production") {
@@ -27,7 +28,10 @@ app.set("view engine", "hbs");
 
 // routes setting
 app.get("/", (req, res) => {
-  res.render("index");
+  Restaurant.find({})
+    .lean()
+    .then((restaurantsData) => res.render("index", { restaurantsData }))
+    .catch((err) => console.log(err));
 });
 
 // start and listen on the Express server
