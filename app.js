@@ -4,6 +4,7 @@ const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Restaurant = require("./models/Restaurant");
+const routes = require("./routes"); // 引用路由器
 
 // 加入這段 code, 僅在非正式環境時, 使用 dotenv
 if (process.env.NODE_ENV !== "production") {
@@ -32,6 +33,7 @@ app.set("view engine", "hbs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use(routes); // 將 request 導入路由器
 
 // routes setting
 // view all
