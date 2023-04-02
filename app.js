@@ -10,14 +10,13 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-const app = express();
-const port = 3000;
-
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
 const db = mongoose.connection;
+
 db.on("error", () => {
   console.log("mongodb error!");
 });
@@ -25,10 +24,14 @@ db.once("open", () => {
   console.log("mongodb connected!");
 });
 
+const app = express();
+const port = 3000;
+
 app.engine("hbs", exphbs({ defaultLayout: "main", extname: ".hbs" }));
 app.set("view engine", "hbs");
-app.use(methodOverride("_method"));
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 
 // routes setting
 // view all
@@ -39,7 +42,37 @@ app.get("/", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-// view specific
+// view specific restaurant
+app.get("/restaurants/:restaurantId", (req, res) => {
+  const { restaurantId } = req.params;
+  Restaurant.findById(restaurantId)
+    .lean()
+    .then((restaurantData) => res.render("show", { restaurantData }))
+    .catch((err) => console.log(err));
+});
+
+// search restaurant
+app.get("/search", (req, res) => {
+  if (!req.query.keywords) {
+    res.redirect("/");
+  }
+
+  const keywords = req.query.keywords;
+  const keyword = req.query.keywords.trim().toLowerCase();
+
+  Restaurant.find({})
+    .lean()
+    .then((restaurantsData) => {
+      const filterRestaurantsData = restaurantsData.filter(
+        (data) =>
+          data.name.toLowerCase().includes(keyword) ||
+          data.category.includes(keyword)
+      );
+      res.render("index", { restaurantsData: filterRestaurantsData, keywords });
+    })
+    .catch((err) => console.log(err));
+});
+
 app.get("/restaurants/:restaurantId", (req, res) => {
   const { restaurantId } = req.params;
   Restaurant.findById(restaurantId)
@@ -56,6 +89,32 @@ app.get("/restaurants/new", (req, res) => {
 // add restaurant
 app.post("/restaurants", (req, res) => {
   Restaurant.create(req.body)
+    .then(() => res.redirect("/"))
+    .catch((err) => console.log(err));
+});
+
+// edit content
+app.get("/restaurants/:restaurantId/edit", (req, res) => {
+  const { restaurantId } = req.params;
+  Restaurant.findById(restaurantId)
+    .lean()
+    .then((restaurantData) => res.render("edit", { restaurantData }))
+    .catch((err) => console.log(err));
+});
+
+// update content
+app.put("/restaurants/:restaurantId", (req, res) => {
+  const { restaurantId } = req.params;
+  Restaurant.findByIdAndUpdate(restaurantId, req.body)
+    //可依照專案發展方向自定編輯後的動作，這邊是導向到瀏覽特定餐廳頁面
+    .then(() => res.redirect(`/restaurants/${restaurantId}`))
+    .catch((err) => console.log(err));
+});
+
+// delete restaurant
+app.delete("/restaurants/:restaurantId", (req, res) => {
+  const { restaurantId } = req.params;
+  Restaurant.findByIdAndDelete(restaurantId)
     .then(() => res.redirect("/"))
     .catch((err) => console.log(err));
 });
