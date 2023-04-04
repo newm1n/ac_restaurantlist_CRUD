@@ -9,6 +9,7 @@
         type="text"
         class="form-control"
         id="name"
+        placeholder="Alpha 科技餐廳"
         name="name"
         value="{{restaurantData.name}}"
         required
@@ -22,6 +23,7 @@
         type="text"
         class="form-control"
         id="name_en"
+        placeholder="Alpha Tech Theme Restaurant"
         name="name_en"
         value="{{restaurantData.name_en}}"
         required
@@ -35,7 +37,7 @@
         type="text"
         class="form-control"
         id="category"
-        placeholder="美式/日式/法式/義式/泰式..."
+        placeholder="美式"
         list="categoryOptions"
         name="category"
         value="{{restaurantData.category}}"
@@ -71,6 +73,7 @@
         type="text"
         class="form-control"
         id="location"
+        placeholder="台中市北屯區迷有這條路520號"
         name="location"
         value="{{restaurantData.location}}"
         required
@@ -84,6 +87,7 @@
         type="tel"
         class="form-control"
         id="phone"
+        placeholder="04-23456789"
         name="phone"
         value="{{restaurantData.phone}}"
         required
@@ -103,7 +107,7 @@
       />
     </div>
     <div class="mb-3">
-      <label for="rating" class="form-label">評分（滿分5分）<span
+      <label for="rating" class="form-label">評分<span
           class="text-danger"
         >*</span></label>
       <input

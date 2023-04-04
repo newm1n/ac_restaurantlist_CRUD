@@ -29,7 +29,10 @@ router.get("/search", (req, res) => {
           data.name.toLowerCase().includes(keyword) ||
           data.category.includes(keyword)
       );
-      res.render("index", { restaurantsData: filterRestaurantsData, keywords });
+      res.render("index", {
+        restaurantsData: filterRestaurantsData,
+        keywords,
+      });
     })
     .catch((err) => console.log(err));
 });
